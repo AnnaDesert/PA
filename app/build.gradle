@@ -26,6 +26,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'org.jsoup:jsoup:1.13.1'
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     compile "com.squareup.okhttp3:okhttp-urlconnection:3.0.0-RC1"
     testImplementation 'junit:junit:4.12'
