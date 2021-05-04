@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,8 +13,11 @@ import android.widget.EditText;
 
 import java.io.IOException;
 
+import java.io.UnsupportedEncodingException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Button Enter;
 
     String URL_student = "http://oreluniver.ru/student";
+    String fam;
 
     private Thread thread;
     private Runnable runnable;
@@ -86,14 +91,19 @@ public class MainActivity extends AppCompatActivity {
                 .followSslRedirects(false)
                 .build();
 
-        RequestBody form = new FormBody.Builder()
-                .add("studentBookId", "170387")
-                .addEncoded("f","%CB%F3%EA%FC%FF%ED%EE%E2%E0")
-                .addEncoded("i","%C0%ED%ED%E0")
-                .addEncoded("pass","yehAFFQDfZ")
-                .add("class","pwd")
-                .add("submit","%C2%EE%E9%F2%E8")
-                .build();
+        RequestBody form = null;
+        try {
+            form = new FormBody.Builder()
+                    .add("studentBookId", "170387")
+                    .addEncoded("f", URLEncoder.encode("Лукьянова","windows-1251"))
+                    .addEncoded("i", URLEncoder.encode("Анна","windows-1251"))
+                    .addEncoded("pass","yehAFFQDfZ")
+                    .add("class","pwd")
+                    .add("submit", URLEncoder.encode("Войти","windows-1251"))
+                    .build();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         Request request = new Request.Builder()
                 .url(URL_student)
