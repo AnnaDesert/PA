@@ -2,14 +2,18 @@ package com.example.pa;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -33,14 +37,13 @@ public class MainActivity extends AppCompatActivity {
     Button Enter;
 
     String URL_student = "http://oreluniver.ru/student";
-    String fam;
 
     private Thread thread;
     private Runnable runnable;
-
     static CookieManager cookieManager = new CookieManager();
+    final Handler h = new Handler();
 
-
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         Name = findViewById(R.id.textName);
         pass = findViewById(R.id.textPass);*/
         Enter = findViewById(R.id.enter);
+       // status = findViewById(R.id.text_status);
 
         Enter.setOnClickListener(new View.OnClickListener() {
 
@@ -63,13 +67,19 @@ public class MainActivity extends AppCompatActivity {
                 String  mUserfam = Fam.getText().toString();
                 String  mUsername = Name.getText().toString();
                 String  mPass = pass.getText().toString();*/
-
-                init();
-
+                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                if(cm.getActiveNetworkInfo() != null) {
+                    init();
+                }
+                try {
+                    thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
-
+// Добавить проверку обязательных полей!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void init(){
         runnable = new Runnable() {
             @Override
@@ -82,6 +92,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void connect(){
+        h.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(GGManager.context,"Подключение", Toast.LENGTH_SHORT).show();
+            }
+        });
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(cm.getActiveNetworkInfo() == null) {
+            Toast.makeText(GGManager.context,"Нет сети", Toast.LENGTH_SHORT).show();
+        }
         Log.i("connect()","start");
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 
@@ -126,20 +146,27 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(GGManager.getContext(), PersonalInfo.class);
             GGManager.getContext().startActivity(intent);
         }
+        else {
+            h.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(GGManager.context,"Неверно введены данные пользователя", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
     }
+    public static class GGManager {
+        private static Context context;
 
+        public static Context getContext() {
+            return context;
+        }
+
+        public static void setContext(Context context) {
+            GGManager.context = context;
+        }
+
+    }
 }
 
-class GGManager {
-    private static Context context;
-
-    public static Context getContext() {
-        return context;
-    }
-
-    public static void setContext(Context context) {
-        GGManager.context = context;
-    }
-
-}

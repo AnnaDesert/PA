@@ -14,6 +14,7 @@
         android:text="@string/info_about_person"
         android:textSize="24dp"
         android:textStyle="bold"
+        android:layout_margin="10dp"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
@@ -22,6 +23,26 @@
         android:id="@+id/text_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         tools:ignore="MissingConstraints" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Чат" />
+
+        <Button
+            android:id="@+id/shedule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Расписание" />
+    </LinearLayout>
 </LinearLayout>
