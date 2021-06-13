@@ -1,18 +1,15 @@
 package com.example.pa;
 
+import java.util.ArrayList;
+
 public class PersonForChat { //Список препод
     String Name;
     String id;
-    String Time;
-    String Text;
-    int adresant;
-
-    public PersonForChat(String Name, String id, String Time, String Text, int adresant){
+    ArrayList<ChatForPerson> chats = new ArrayList<ChatForPerson>(1);
+    public PersonForChat(String Name, String id){ //с кем чат
         this.Name = Name;
         this.id = id;
-        this.Time = Time;
-        this.Text = Text;
-        this.adresant = adresant;
-
     }
+    public String getName(){return Name;}
+    public String getId(){return id;}
 }

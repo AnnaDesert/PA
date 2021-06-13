@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.lang.reflect.Array;
 import java.net.CookieManager;
 import java.util.ArrayList;
 
@@ -62,24 +63,30 @@ public class Chat extends AppCompatActivity {
         for(Element option : option_select) {
             String namePerson = option.text(); // ФИО
             String idPerson = option.attr("value"); // ID
-            ForChats.add(new PersonForChat(namePerson, idPerson, null, null, 0));// Список преподователей
+            ForChats.add(new PersonForChat(namePerson, idPerson));// Список преподователей
         }
+        //Log.i("ForChats size", String.valueOf(ForChats.size()));
+        //for(int i = 0; i < ForChats.size();i++){ Log.i("ForChats size", ForChats.get(i).Name);}
 
         //Чаты
-        ArrayList<ArrayList<PersonForChat>> Chats = new ArrayList<ArrayList<PersonForChat>>(ForChats.size());
-        ArrayList<PersonForChat> chat = new ArrayList<PersonForChat>(1);
-        for(int i = 0; i < Chats.size();i++){
-            chat.add(ForChats.get(i));
-            Chats.add(chat);
+
+
+        // JSOUP
+        Elements input_select = doc.select("#input > div");
+
+        for(Element div : input_select){
+            Elements time = div.select("div.col-md-9 > p.text-muted");//Time
+            Elements message = div.select("div.col-md-9 > p:nth-child(3)");// TEXT
+            Elements idthisMess = div.select("div.col-md-1 > a:nth-child(1)"); //ID
+
+            String timeMess = time.text(); // Time
+            String messMess = message.text(); //Text
+            String idMess = idthisMess.attr("onclick").replaceAll("\\D+",""); // ID
+
+            Log.i("TAG", timeMess);
+            Log.i("TAG", messMess);
+            Log.i("TAG", idMess);
         }
-
-        //Elements desc_h3 = doc.select("#input > div:nth-child(1)");
-        Elements time = doc.select("#input > div:nth-child(1) > div > div.col-md-9 > p.text-muted");// TIME
-        Elements message = doc.select("#input > div:nth-child(1) > div > div.col-md-9 > p:nth-child(3)");// TEXT
-        Elements idthisMess = doc.select("#input > div:nth-child(1) > div > div.col-md-1 > a:nth-child(1)"); //replyemp(ID)
-
-
-       // Log.i("TAG", String.valueOf(Chats.get(0).size()));
     }
 
 }
