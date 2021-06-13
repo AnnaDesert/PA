@@ -67,14 +67,13 @@ public class MainActivity extends AppCompatActivity {
                 String  mUserfam = Fam.getText().toString();
                 String  mUsername = Name.getText().toString();
                 String  mPass = pass.getText().toString();*/
-                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);//Check Intrenet  connect
                 if(cm.getActiveNetworkInfo() != null) {
+                    Toast.makeText(GGManager.context,"Подключение", Toast.LENGTH_SHORT).show();
                     init();
                 }
-                try {
-                    thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                else{
+                    Toast.makeText(GGManager.context,"Нет сети", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -92,68 +91,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void connect(){
-        h.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(GGManager.context,"Подключение", Toast.LENGTH_SHORT).show();
-            }
-        });
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm.getActiveNetworkInfo() == null) {
-            Toast.makeText(GGManager.context,"Нет сети", Toast.LENGTH_SHORT).show();
-        }
-        Log.i("connect()","start");
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+            Log.i("connect()", "start");
+            cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .cookieJar(new JavaNetCookieJar(cookieManager))
-                .followRedirects(false)
-                .followSslRedirects(false)
-                .build();
-
-        RequestBody form = null;
-        try {
-            form = new FormBody.Builder()
-                    .add("studentBookId", "170387")
-                    .addEncoded("f", URLEncoder.encode("Лукьянова","windows-1251"))
-                    .addEncoded("i", URLEncoder.encode("Анна","windows-1251"))
-                    .addEncoded("pass","yehAFFQDfZ")
-                    .add("class","pwd")
-                    .add("submit", URLEncoder.encode("Войти","windows-1251"))
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .cookieJar(new JavaNetCookieJar(cookieManager))
+                    .followRedirects(false)
+                    .followSslRedirects(false)
                     .build();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
 
-        Request request = new Request.Builder()
-                .url(URL_student)
-                .post(form)
-                .build();
-        Call call = client.newCall(request);
+            RequestBody form = null;
+            try {
+                form = new FormBody.Builder()
+                        .add("studentBookId", "170387")
+                        .addEncoded("f", URLEncoder.encode("Лукьянова", "windows-1251"))
+                        .addEncoded("i", URLEncoder.encode("Анна", "windows-1251"))
+                        .addEncoded("pass", "yehAFFQDfZ")
+                        .add("class", "pwd")
+                        .add("submit", URLEncoder.encode("Войти", "windows-1251"))
+                        .build();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            Request request = new Request.Builder()
+                    .url(URL_student)
+                    .post(form)
+                    .build();
+            Call call = client.newCall(request);
 
 
-        Response response = null;
-        try {
-            response = call.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            Response response = null;
+            try {
+                response = call.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        Log.i("Response Status Code", String.valueOf(response.code()));
+            Log.i("Response Status Code", String.valueOf(response.code()));
 
-        if( response.code() == 302){
-            Log.i("MainActivity","Finish");
-            Intent intent = new Intent(GGManager.getContext(), PersonalInfo.class);
-            GGManager.getContext().startActivity(intent);
-        }
-        else {
-            h.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(GGManager.context,"Неверно введены данные пользователя", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+            if (response.code() == 302) { // Check connect Account
+                Log.i("MainActivity", "Finish");
+                Intent intent = new Intent(GGManager.getContext(), PersonalInfo.class);
+                GGManager.getContext().startActivity(intent);
+            } else {
+                h.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(GGManager.context, "Неверно введены данные пользователя", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
     }
     public static class GGManager {
