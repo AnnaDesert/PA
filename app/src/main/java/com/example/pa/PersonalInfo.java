@@ -39,7 +39,6 @@ public class PersonalInfo extends AppCompatActivity {
 
     static String resBody = null;// строка общего пользования
     static String Body = "Низкая скорость интернета, повторите соединение";
-    static int flag = 0;
 
     CookieManager cookieManager = new CookieManager();
     String URL_personal = "http://oreluniver.ru/student/personal";
@@ -108,10 +107,10 @@ public class PersonalInfo extends AppCompatActivity {
     public static String parseBody(String responseString){
         Document doc = Jsoup.parse(responseString);
 
-        Elements desc_h2 = doc.getElementsByTag("h2");
-        Elements desc_nexth2 = desc_h2.nextAll();
+        Elements desc_h2 = doc.select("body > div.content.container > div > div > div:nth-child(3) > div.col-md-9.col-xs-12");
+        //Elements desc_nexth2 = desc_h2.nextAll();
 
-        return desc_nexth2.get(0).html();
+        return desc_h2.get(0).html();
     }
 
 }

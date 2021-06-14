@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,9 +18,9 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter<MessageRecy
 
     public MessageRecyclerViewAdapter(ArrayList<ChatForPerson> chats){
         this.chats = chats;
-        //for(int i = 0; i < chats.size(); i++){
-            //System.out.println("NUMBER" + (i+1) +chats.get(i).getMess());
-        //}
+        for(int i = 0; i < chats.size(); i++){
+            System.out.println("NUMBER" + (i+1) +chats.get(i).getMess() + "adresant " + chats.get(i).adresant);
+        }
     }
     //////////////////////////////////////////////////////////////
     class MessViewHolder extends RecyclerView.ViewHolder {
@@ -41,7 +42,10 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter<MessageRecy
 
     @Override
     public void onBindViewHolder(@NonNull MessViewHolder holder, int position) {
-        Log.i("TAG REC",chats.get(position).getMess());
+        //Log.i("TAG REC",chats.get(position).getMess());
+        if(chats.get(position).adresant.equals("out")){
+            Log.i("TAG Position", "OUT");
+        }
         holder.text_mess.setText(chats.get(position).getMess());//Добавление текста в кнопку
     }
 

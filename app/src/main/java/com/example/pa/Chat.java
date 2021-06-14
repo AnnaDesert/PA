@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.RelativeLayout;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -45,6 +46,7 @@ public class Chat extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this); // Отображение Вью
         MessList.setLayoutManager(layoutManager); // Подключение Менеджера
         MessList.setHasFixedSize(true);// Добавление фиксированной длинны
+
 
         Log.i("TAG","Чат открыт");
         cookieManager = MainActivity.cookieManager;
