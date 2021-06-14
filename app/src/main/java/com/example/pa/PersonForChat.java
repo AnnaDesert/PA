@@ -10,6 +10,4 @@ public class PersonForChat { //Список препод
         this.Name = Name;
         this.id = id;
     }
-    public String getName(){return Name;}
-    public String getId(){return id;}
 }

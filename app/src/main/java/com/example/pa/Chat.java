@@ -24,8 +24,12 @@ public class Chat extends AppCompatActivity {
 
     CookieManager cookieManager;
     String URL_Chat = "http://oreluniver.ru/chat";
+    public static String pars_select_in = "#input > div";
+    public static String pars_select_out = "#output > div";
 
     public static ArrayList<PersonForChat> ForChats = new ArrayList<>(1);
+    public static ArrayList<ChatForPerson> Chats = new ArrayList<>(1);
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,26 +70,42 @@ public class Chat extends AppCompatActivity {
             ForChats.add(new PersonForChat(namePerson, idPerson));// Список преподователей
         }
         //Log.i("ForChats size", String.valueOf(ForChats.size()));
-        //for(int i = 0; i < ForChats.size();i++){ Log.i("ForChats size", ForChats.get(i).Name);}
+        for(int i = 0; i < ForChats.size();i++){ System.out.print(ForChats.get(i).Name + " " + ForChats.get(i).id + "\n");}
 
         //Чаты
+        // Входящие
+        parsMess(doc, pars_select_in, "in");
+        // Исходящие
+        parsMess(doc, pars_select_out, "out");
 
+        // ДОБАВИТЬ СОРТИРОВКУ ПО ДАТАМ
+        for(int i = 0; i < Chats.size()-1; i++){
+            System.out.println(Chats.get(i).Time + " " + Chats.get(i).Name + " " + Chats.get(i).Text + " " + Chats.get(i).id);
+        }
 
-        // JSOUP
-        Elements input_select = doc.select("#input > div");
+    }
+
+    public static void parsMess(Document doc, String select, String adresant){
+        Elements input_select = doc.select(select);
 
         for(Element div : input_select){
             Elements time = div.select("div.col-md-9 > p.text-muted");//Time
+            Elements name = div.select(" div.col-md-9 > p:nth-child(2)");
             Elements message = div.select("div.col-md-9 > p:nth-child(3)");// TEXT
             Elements idthisMess = div.select("div.col-md-1 > a:nth-child(1)"); //ID
 
             String timeMess = time.text(); // Time
+            String NameMess = name.text();
             String messMess = message.text(); //Text
             String idMess = idthisMess.attr("onclick").replaceAll("\\D+",""); // ID
 
-            Log.i("TAG", timeMess);
-            Log.i("TAG", messMess);
-            Log.i("TAG", idMess);
+            if(!idMess.equals("")){
+                Chats.add(new ChatForPerson(timeMess, NameMess, messMess, idMess, adresant));
+            }
+
+            //Log.i("TAG", timeMess);
+            //Log.i("TAG", messMess);
+            //Log.i("TAG", idMess);
         }
     }
 
