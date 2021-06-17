@@ -33,7 +33,7 @@ public class ChatForPerson implements Comparable<ChatForPerson>{
 
     }
     public String getMess(){
-        String mess = this.Time + "\n" + Name + "\n" + this.Text;
+        String mess = this.Time + "<br><b>" + Name + "</b><br>" + this.Text;
         return mess;
     }
 

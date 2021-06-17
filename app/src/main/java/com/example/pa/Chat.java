@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RelativeLayout;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -82,10 +84,24 @@ public class Chat extends AppCompatActivity {
             ForChats.add(new PersonForChat(namePerson, idPerson));// Список преподователей
         }
         //Log.i("ForChats size", String.valueOf(ForChats.size()));
-        for(int i = 0; i < ForChats.size();i++){ System.out.print(ForChats.get(i).Name + " " + ForChats.get(i).id + "\n");}
+        for(int i = 0; i < ForChats.size();i++){ //System.out.print(ForChats.get(i).Name + " " + ForChats.get(i).id + "\n");
+             }
         //Чаты
         // Входящие
         parsMess(doc, pars_select_in, "in");
+        // PAGERS!!!!!!!!!!!!!!!
+        /*String MessPage = null;
+        String strMessPage = ResponseConnect.connMessPage(cookieManager, "http://oreluniver.ru/chat/getMessages", "input", 2);
+        try {
+            JSONObject jsonObject = new JSONObject(strMessPage);
+
+            MessPage = jsonObject.getString("messages");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //System.out.print(MessPage);
+        parsMess(Jsoup.parse(MessPage), "div", "in");
+*/
         // Исходящие
         parsMess(doc, pars_select_out, "out");
 
@@ -113,7 +129,7 @@ public class Chat extends AppCompatActivity {
 
     public static void parsMess(Document doc, String select, String adresant){
         Elements input_select = doc.select(select);
-
+//#input > div:nth-child(1) > div > div.col-md-9 > p.text-muted > small
         for(Element div : input_select){
             Elements time = div.select("div.col-md-9 > p.text-muted");//Time
             Elements name = div.select(" div.col-md-9 > p:nth-child(2)"); // Name
