@@ -10,4 +10,8 @@ public class PersonForChat { //Список препод
         this.Name = Name;
         this.id = id;
     }
+    public String toString()
+    {
+        return Name;
+    }
 }

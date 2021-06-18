@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Личный кабинет</string>
     <string name="info_about_person">Информация об обучающемся</string>
+    <string name="item1">Написать сообщение</string>
 </resources>

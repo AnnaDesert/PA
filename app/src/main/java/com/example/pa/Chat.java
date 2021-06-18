@@ -1,6 +1,7 @@
 package com.example.pa;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,27 +9,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.RelativeLayout;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.lang.reflect.Array;
 import java.net.CookieManager;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import okhttp3.FormBody;
 
 public class Chat extends AppCompatActivity {
     private Thread thread;
     private Runnable runnable;
 
     static RecyclerView MessList;
+    int flag;
 
     CookieManager cookieManager;
     String URL_Chat = "http://oreluniver.ru/chat";
@@ -50,19 +52,20 @@ public class Chat extends AppCompatActivity {
         MessList.setHasFixedSize(true);// Добавление фиксированной длинны
 
 
-        Log.i("TAG","Чат открыт");
+        Log.i("TAG", "Чат открыт");
         cookieManager = MainActivity.cookieManager;
         init();
 
     }
 
-    private void init(){
+    private void init() {
+        flag = 0;
         runnable = new Runnable() {
 
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void run() {
-                String chat_str = ResponseConnect.conn(cookieManager,URL_Chat);
+                String chat_str = ResponseConnect.conn(cookieManager, URL_Chat);
                 parseBody(chat_str);
             }
         };
@@ -71,44 +74,32 @@ public class Chat extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void parseBody(String responseString){
+    public void parseBody(String responseString) {
         Document doc = Jsoup.parse(responseString);
 
         //Список преподователей
         Elements select = doc.select("#sender");// SELECT
         Elements option_select = select.get(0).getElementsByTag("option");// LIST OPTION
 
-        for(Element option : option_select) {
+        for (Element option : option_select) {
             String namePerson = option.text(); // ФИО
             String idPerson = option.attr("value"); // ID
             ForChats.add(new PersonForChat(namePerson, idPerson));// Список преподователей
         }
+        flag = 1;
         //Log.i("ForChats size", String.valueOf(ForChats.size()));
-        for(int i = 0; i < ForChats.size();i++){ //System.out.print(ForChats.get(i).Name + " " + ForChats.get(i).id + "\n");
-             }
+        for (int i = 0; i < ForChats.size(); i++) { //System.out.print(ForChats.get(i).Name + " " + ForChats.get(i).id + "\n");
+        }
         //Чаты
         // Входящие
         parsMess(doc, pars_select_in, "in");
-        // PAGERS!!!!!!!!!!!!!!!
-        /*String MessPage = null;
-        String strMessPage = ResponseConnect.connMessPage(cookieManager, "http://oreluniver.ru/chat/getMessages", "input", 2);
-        try {
-            JSONObject jsonObject = new JSONObject(strMessPage);
-
-            MessPage = jsonObject.getString("messages");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //System.out.print(MessPage);
-        parsMess(Jsoup.parse(MessPage), "div", "in");
-*/
         // Исходящие
         parsMess(doc, pars_select_out, "out");
 
         Collections.sort(Chats);
         // ДОБАВИТЬ СОРТИРОВКУ ПО ДАТАМ
 
-        for(int i = 0; i < Chats.size(); i++){
+        for (int i = 0; i < Chats.size(); i++) {
             //System.out.println(Chats.get(i).Time + " " + Chats.get(i).Name + " " + Chats.get(i).Text + " " + Chats.get(i).id);
         }
         // RECYCLER VIEW
@@ -127,10 +118,9 @@ public class Chat extends AppCompatActivity {
 
     }
 
-    public static void parsMess(Document doc, String select, String adresant){
+    public static void parsMess(Document doc, String select, String adresant) {
         Elements input_select = doc.select(select);
-//#input > div:nth-child(1) > div > div.col-md-9 > p.text-muted > small
-        for(Element div : input_select){
+        for (Element div : input_select) {
             Elements time = div.select("div.col-md-9 > p.text-muted");//Time
             Elements name = div.select(" div.col-md-9 > p:nth-child(2)"); // Name
             Elements message = div.select("div.col-md-9 > p:nth-child(3)");// TEXT
@@ -139,9 +129,9 @@ public class Chat extends AppCompatActivity {
             String timeMess = time.text(); // Time
             String NameMess = name.text(); // Name
             String messMess = message.text(); //Text
-            String idMess = idthisMess.attr("onclick").replaceAll("\\D+",""); // ID
+            String idMess = idthisMess.attr("onclick").replaceAll("\\D+", ""); // ID
 
-            if(!idMess.equals("")){
+            if (!idMess.equals("")) {
                 Chats.add(new ChatForPerson(timeMess, NameMess, messMess, idMess, adresant));
             }
 
@@ -151,4 +141,34 @@ public class Chat extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(flag == 1)
+        switch (item.getItemId()) {
+            case R.id.item1:
+                Log.i("MENU","Start");
+                AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this);
+                View view = getLayoutInflater().inflate(R.layout.new_mess, null);
+                builder.setTitle("Отправить сообщение");
+
+                Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+                ArrayAdapter<PersonForChat> adapter = new ArrayAdapter<PersonForChat>(Chat.this,
+                        android.R.layout.simple_spinner_item, ForChats);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapter);
+
+                builder.setView(view);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                return true;
+        }
+        return false;
+    }
 }
