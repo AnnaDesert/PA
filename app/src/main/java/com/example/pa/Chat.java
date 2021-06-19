@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import org.jsoup.Jsoup;
@@ -31,6 +34,9 @@ public class Chat extends AppCompatActivity {
 
     static RecyclerView MessList;
     int flag;
+    int statusEnterMessage;
+    String idMess;
+    String TextMess;
 
     CookieManager cookieManager;
     String URL_Chat = "http://oreluniver.ru/chat";
@@ -54,6 +60,7 @@ public class Chat extends AppCompatActivity {
 
         Log.i("TAG", "Чат открыт");
         cookieManager = MainActivity.cookieManager;
+        statusEnterMessage = 0;
         init();
 
     }
@@ -65,6 +72,11 @@ public class Chat extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void run() {
+                ForChats.clear();
+                Chats.clear();
+                if(statusEnterMessage == 1){
+                    ResponseConnect.PostMess(cookieManager, idMess, TextMess);
+                }
                 String chat_str = ResponseConnect.conn(cookieManager, URL_Chat);
                 parseBody(chat_str);
             }
@@ -157,18 +169,40 @@ public class Chat extends AppCompatActivity {
                 View view = getLayoutInflater().inflate(R.layout.new_mess, null);
                 builder.setTitle("Отправить сообщение");
 
-                Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+                final Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
                 ArrayAdapter<PersonForChat> adapter = new ArrayAdapter<PersonForChat>(Chat.this,
                         android.R.layout.simple_spinner_item, ForChats);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapter);
 
-                builder.setView(view);
+                builder.setView(view)
+                        .setPositiveButton("Отправить", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        statusEnterMessage = 1;
+                        Log.i("Выбран", ForChats.get(spinner.getSelectedItemPosition()).id);
+                        idMess = ForChats.get(spinner.getSelectedItemPosition()).id;
+                        AlertDialog alertDialog = (AlertDialog) dialog;
+                        EditText editText = alertDialog.findViewById(R.id.editText);
+                        TextMess = editText.getText().toString(); // ЗДЕСЬ ПИЗДЕЦ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        Log.i("Текст", TextMess);
+                        init();
+                        // Закрываем окно
+                        dialog.cancel();
+                    }
+                });
+                builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
                 AlertDialog dialog = builder.create();
+                dialog.setCancelable(false);
                 dialog.show();
 
                 return true;
         }
         return false;
     }
+
+
 }

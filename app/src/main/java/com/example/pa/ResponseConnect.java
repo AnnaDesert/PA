@@ -6,11 +6,14 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieManager;
 import java.net.URLEncoder;
 import java.util.Objects;
 
+import okhttp3.Call;
 import okhttp3.FormBody;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -44,38 +47,40 @@ public class ResponseConnect {
 
         return responseString1;
     }
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static String connMessPage(CookieManager cookieManager, String URL, String in_out, int page){
+    public static void PostMess(CookieManager cookieManager, String adres, String text){
 
-        OkHttpClient client_mess_page = new OkHttpClient().newBuilder()
+        OkHttpClient client = new OkHttpClient().newBuilder()
                 .cookieJar(new JavaNetCookieJar(cookieManager))
                 .followRedirects(false)
                 .followSslRedirects(false)
                 .build();
 
-        RequestBody pagination = new FormBody.Builder()
-                .add("type", in_out)
-                .add("page", String.valueOf(page))
+        RequestBody form = null;
+        form = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("sender", adres)
+                .addFormDataPart("message", text)
+                .addFormDataPart("message_file_name", "")
+                .addFormDataPart("MAX_FILE_SIZE", "1048576000")
+                .addFormDataPart("message_file", "")
+                .addFormDataPart("submitMessage", "")
                 .build();
 
-        Request request_person = new Request.Builder()
-                .url(URL)
-                .post(pagination)
+        Request request = new Request.Builder()
+                .url("http://oreluniver.ru/chat")
+                .post(form)
                 .build();
+        Call call = client.newCall(request);
 
-        String responseString1 = null;
+
+        Response response = null;
         try {
-            Response response_person = client_mess_page.newCall(request_person).execute();
-
-            //Log.i("PAGE", String.valueOf(response_person.toString()));
-            byte[] responseBytes = Objects.requireNonNull(response_person.body()).bytes();
-            responseString1 = new String(responseBytes);
+            response = call.execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        //Log.i("PAGE", responseString1);
-        return responseString1;
+        Log.i("Code Mess", String.valueOf(response.code()));
     }
 }
