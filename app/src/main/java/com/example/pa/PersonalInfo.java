@@ -3,6 +3,7 @@ package com.example.pa;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -72,6 +73,9 @@ public class PersonalInfo extends AppCompatActivity {
         Sсhedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.setComponent(new ComponentName("com.example.schedule", "com.example.schedule.MainActivity"));
+                MainActivity.GGManager.getContext().startActivity(intent);
             }
         });
 

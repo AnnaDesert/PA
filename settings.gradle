@@ -1,2 +1,4 @@
 include ':app'
 rootProject.name = "PA"
+include ':library1'
+project(':library1').projectDir = new File('C:\\Users\\Studentown\\AndroidStudioProjects\\Schedule')
