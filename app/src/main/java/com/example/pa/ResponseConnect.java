@@ -13,6 +13,8 @@ import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -50,6 +52,12 @@ public class ResponseConnect {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static void PostMess(CookieManager cookieManager, String adres, String text){
+        String textWin = null;
+        try {
+            textWin = new String(text.getBytes("UTF-8"), "windows-1251");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .cookieJar(new JavaNetCookieJar(cookieManager))
@@ -61,10 +69,11 @@ public class ResponseConnect {
         form = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("sender", adres)
-                .addFormDataPart("message", text)
+                .addFormDataPart("message", textWin)
                 .addFormDataPart("message_file_name", "")
                 .addFormDataPart("MAX_FILE_SIZE", "1048576000")
-                .addFormDataPart("message_file", "")
+                .addPart(Headers.of("Content-Disposition", "form-data; name=\"message_file\"; filename=\"\""),
+                        RequestBody.create(MediaType.parse("application/octet-stream"), new byte[0]))
                 .addFormDataPart("submitMessage", "")
                 .build();
 
