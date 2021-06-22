@@ -35,6 +35,7 @@ import okhttp3.internal.JavaNetCookieJar;
 public class MainActivity extends AppCompatActivity {
     EditText number, Fam, Name, pass;
     Button Enter;
+    String  mNumber,mUserfam;
 
     String URL_student = "http://oreluniver.ru/student";
 
@@ -50,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         GGManager.setContext(this);
-/*
+
         number = findViewById(R.id.textNumber);
         Fam = findViewById(R.id.textFam);
-        Name = findViewById(R.id.textName);
+        /*Name = findViewById(R.id.textName);
         pass = findViewById(R.id.textPass);*/
         Enter = findViewById(R.id.enter);
        // status = findViewById(R.id.text_status);
@@ -62,10 +63,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-
-                /*String  mNumber = number.getText().toString();
-                String  mUserfam = Fam.getText().toString();
-                String  mUsername = Name.getText().toString();
+                mNumber = number.getText().toString();
+                mUserfam = Fam.getText().toString();
+                /*String  mUsername = Name.getText().toString();
                 String  mPass = pass.getText().toString();*/
                 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);//Check Intrenet  connect
                 if(cm.getActiveNetworkInfo() != null) {
@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
             RequestBody form = null;
             try {
                 form = new FormBody.Builder()
-                        .add("studentBookId", "170387")
-                        .addEncoded("f", URLEncoder.encode("Лукьянова", "windows-1251"))
+                        .add("studentBookId", mNumber)
+                        .addEncoded("f", URLEncoder.encode(mUserfam, "windows-1251"))
                         .addEncoded("i", URLEncoder.encode("Анна", "windows-1251"))
                         .addEncoded("pass", "yehAFFQDfZ")
                         .add("class", "pwd")
