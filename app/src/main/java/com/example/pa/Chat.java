@@ -184,7 +184,7 @@ public class Chat extends AppCompatActivity {
                         AlertDialog alertDialog = (AlertDialog) dialog;
                         EditText editText = alertDialog.findViewById(R.id.editText);
                         TextMess = editText.getText().toString(); // ЗДЕСЬ ПИЗДЕЦ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        Log.i("Текст", TextMess);
+                        Log.i("Текст", TextMess); //Проверять на пустоту в тексте!!!!
                         init();
                         // Закрываем окно
                         dialog.cancel();

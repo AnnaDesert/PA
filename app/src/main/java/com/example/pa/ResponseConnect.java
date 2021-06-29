@@ -54,11 +54,12 @@ public class ResponseConnect {
     public static void PostMess(CookieManager cookieManager, String adres, String text){
         String textWin = null;
         try {
-            textWin = new String(text.getBytes("UTF-8"), "windows-1251");
+            textWin = new String(text.getBytes(), "windows-1251");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
+        Log.i("TAG STR", textWin);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .cookieJar(new JavaNetCookieJar(cookieManager))
                 .followRedirects(false)
